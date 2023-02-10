@@ -124,6 +124,7 @@ function addRole () {
                 department_id: deptQuery.id
             })
         })
+        initDirectory()
     })
 }
 
@@ -145,10 +146,44 @@ function addEmployee() {
             type: 'input',
             message: '━━━ what is the ROLE ID of the employee with which you are adding?'
         },
+        {
+            name: 'manager_id',
+            type: 'input',
+            message: '━━━ what is the MANAGER ID of the employee with which you are adding?'
+        }
     ])
     .then((data) => {
+        db.query('INSERT INTO employee', data, (err, res) => {
+        if (err) throw err
+        console.log('━━━ the employee has been added!')
+        })
+        initDirectory()
     })
 }
 
+function updateEmployee() {
+    db.query('SELECT * FROM employee', (err, employee) =>
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'employee_name',
+            message: '━━━ which EMPLOYEE ROLE do you wish to update?',
+            choices: employee.map((employee) => `${employee.first_name} ${employe.last_name}`),
+            type: 'role_id',
+            message: '━━━ what is the ID ROLE you wish to add?'
+        },
+    ])
+    .then((data) => {
+        const employee = employees.find(
+            (employee) => '${employee.first_name}' === data.employee
+        )
+        db.query ('UPDATE employee SET role_id = ? WHERE id = ?', [data.role_id, employee.id]
+        )
+        initDirectory()
+    })
+    )
+}
 
 initDirectory()
+
+// first_name, last_name, role_id, manager_id
