@@ -128,7 +128,26 @@ function addRole () {
 }
 
 function addEmployee() {
-    
+    inquirer
+    .prompt([
+        {
+            name: 'first_name',
+            type: 'input',
+            message: '━━━ what is the FIRST NAME of the employee with which you are adding?'
+        },
+        {
+            name: 'last_name',
+            type: 'input',
+            message: '━━━ what is the LAST NAME of the employee with which you are adding?'
+        },
+        {
+            name: 'role_id',
+            type: 'input',
+            message: '━━━ what is the ROLE ID of the employee with which you are adding?'
+        },
+    ])
+    .then((data) => {
+    })
 }
 
 
