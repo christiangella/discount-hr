@@ -1,4 +1,5 @@
 const inquirer = require('inquirer')
+const db = require('./config/connection')
 
 function initDirectory() {
     inquirer
@@ -46,6 +47,7 @@ function initDirectory() {
             case '• ━━━ none, i am done':
                 db.end();
                 console.log(`\n\n✧ * ━━━━━━━━━━━━━━━━━━━━━━━━\n\n        thanks for using \n        DISCOUNT HR !\n\n   ━━━━━━━━━━━━━━━━━━━━━━━━━ *.\n\n`)
+                break
             }
         }
     )
@@ -185,5 +187,3 @@ function updateEmployee() {
 }
 
 initDirectory()
-
-// first_name, last_name, role_id, manager_id
