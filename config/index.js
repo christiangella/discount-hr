@@ -46,6 +46,12 @@ class DATABASE {
             'UPDATE employee SET role_id = ? WHERE id = ?', [role_id, employee_id]
         )
     }
+
+    getAllDepartments() {
+        return this.connection.promise().query(
+          'SELECT department.id, department.name FROM department;'
+        );
+      }
 }
 
 module.exports = new DATABASE(connection)
