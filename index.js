@@ -1,7 +1,6 @@
 const inquirer = require('inquirer')
 const { prompt } = require('inquirer')
-const { viewDepartments, viewRoles, viewEmployees, addDepartment, addRole, addEmployee, updateEmployee } = require('./config/index')
-const db = require('./config/index')
+const db = require('./config/index.js')
 require('console.table')
 
 function initDirectory() {
@@ -42,7 +41,7 @@ function initDirectory() {
                 {
                     name: '• ━━━ none, i am done',
                     value: 'quit'
-                },
+                }
             ]
         }
     ])
@@ -185,7 +184,135 @@ function methodAddRole() {
 }
 
 function methodAddEmployee () {
-    
+    inquirer
+    .prompt([
+        {
+            name: 'first_name',
+            type: 'input',
+            message: '━━━ what is the FIRST NAME of the employee with which you are adding?'
+        },
+        {
+            name: 'last_name',
+            type: 'input',
+            message: '━━━ what is the LAST NAME of the employee with which you are adding?'
+        }
+    ])
+    .then(res => {
+        let first_name = res.first_name
+        let last_name = res.last_name
+
+        db.viewRoles()
+        .then(([rows]) => {
+            let roles = rows
+            const roleChoices = roles.map(
+                ({ id, title }) => ({
+                    name: title,
+                    value: id
+                })
+            )
+        inquirer.prompt({
+            type: 'list',
+            name: 'role_id',
+            message: '━━━ what is the ROLE of the employee with which you are adding?',
+            choices: roleChoices
+        })
+        .then(res => {
+            let role_id = res.role_id
+
+            db.viewEmployees()
+            .then(([data]) => {
+                let employees = data
+                const managerChoices = employees.map(
+                    ({
+                        id, first_name, last_name
+                    }) => ({
+                        name: `${first_name} ${last_name}`,
+                        value: id
+                    })
+                )
+                managerChoices.unshift({ name: "None", value: null });
+
+                prompt({
+                    type: 'list',
+                    name: 'manager_id',
+                    message: '━━━ what is the MANAGER of the employee with which you are adding?',
+                    choices: managerChoices
+                })
+                .then(res => {
+                    let employee = {
+                        manager_id: res.manager_id,
+                        role_id: role_id,
+                        first_name: first_name,
+                        last_name: last_name
+                    }
+                    db.addEmployee(employee)
+                })
+                .then(
+                    () => console.log('Successfully added!')
+                )
+                .then(
+                    () => initDirectory()
+                )
+            })
+        })
+
+        })
+    })
+}
+
+function methodUpdateEmployee () {
+    db.viewEmployees()
+    .then(([data]) => {
+        let employees = data
+        const employeeChoices = employees.map(
+            ({
+                id, first_name, last_name
+            }) => ({
+                name: `${first_name} ${last_name}`,
+                value: id
+            })
+        );
+        prompt([
+            {
+                type: 'list',
+                name: 'employee_id',
+                message: '━━━ which EMPLOYEE ROLE do you wish to update?',
+                choices: employeeChoices
+            }
+        ])
+        .then(res => {
+            let employee_id = res.employee_id
+            db.viewRoles()
+            .then(([data]) => {
+                let roles = data
+                const roleChoices = roles.map(
+                    ({
+                        id, title
+                    }) => ({
+                        name: title,
+                        value: id
+                    })
+                )
+                prompt([
+                    {
+                        type: 'list',
+                        name: 'role_id',
+                        message: '━━━ what is the ROLE you wish to add?',
+                        choices: roleChoices
+                    }
+                ])
+                .then(
+                    res => db.updateEmployee(employee_id, res.role_id)
+                )
+                .then(
+                    () => console.log('Successfully added!')
+                )
+                .then(
+                    () => initDirectory()
+                )
+            })
+        })
+    })
 }
 
 initDirectory()
