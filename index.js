@@ -3,10 +3,15 @@ const { prompt } = require('inquirer')
 const db = require('./config/index.js')
 require('console.table')
 
+function init() {
+    console.log(`\n\n✧ * ━━━━━━━━━━━━━━━━━━━━━━━━\n\n        this is . . . \n        DISCOUNT HR !\n\n        let's get started\n\n   ━━━━━━━━━━━━━━━━━━━━━━━━━ *.\n\n`)
+    initDirectory()
+}
+
 function initDirectory() {
     inquirer.prompt([
         {
-            message: `\n\n✧ * ━━━━━━━━━━━━━━━━━━━━━━━━\n\n        this is . . . \n        DISCOUNT HR !\n\n        let's get started\n\n   ━━━━━━━━━━━━━━━━━━━━━━━━━ *.\n\n`,
+            message: `\n\nwhat would you like to do?\n\n`,
             name: 'menu',
             type: 'list',
             choices: [
@@ -82,7 +87,7 @@ function quit() {
 }
 
 function methodViewDepartments() {
-    db.viewDepartments
+    db.viewDepartments()
     .then(
         ([data]) => {
             console.log(`\n\n✧ * ━━━━━━━━━━━━━━━━━━━━━━━━\n\n        currently displaying \n        DEPARTMENTS\n\n\n\n   ━━━━━━━━━━━━━━━━━━━━━━━━━ *.\n\n`);
@@ -125,7 +130,7 @@ function methodAddDepartment() {
     .prompt([
         {
             type: 'input',
-            name: 'dept_name',
+            name: 'name',
             message: '━━━ what is the NAME of the department with which you are adding?'
         },
     ])
@@ -198,8 +203,8 @@ function methodAddEmployee () {
         }
     ])
     .then(res => {
-        let first_name = res.first_name
-        let last_name = res.last_name
+        let firstName = res.first_name
+        let lastName = res.last_name
 
         db.viewRoles()
         .then(([rows]) => {
@@ -212,12 +217,12 @@ function methodAddEmployee () {
             )
         inquirer.prompt({
             type: 'list',
-            name: 'role_id',
+            name: 'roleId',
             message: '━━━ what is the ROLE of the employee with which you are adding?',
             choices: roleChoices
         })
         .then(res => {
-            let role_id = res.role_id
+            let roleId = res.roleId
 
             db.viewEmployees()
             .then(([data]) => {
@@ -234,24 +239,22 @@ function methodAddEmployee () {
 
                 prompt({
                     type: 'list',
-                    name: 'manager_id',
+                    name: 'managerId',
                     message: '━━━ what is the MANAGER of the employee with which you are adding?',
                     choices: managerChoices
                 })
                 .then(res => {
                     let employee = {
-                        manager_id: res.manager_id,
-                        role_id: role_id,
-                        first_name: first_name,
-                        last_name: last_name
+                        manager_id: res.managerId,
+                        role_id: roleId,
+                        first_name: firstName,
+                        last_name: lastName
                     }
                     db.addEmployee(employee)
                 })
                 .then(
-                    () => console.log('Successfully added!')
-                )
-                .then(
-                    () => initDirectory()
+                    console.log('Successfully added!'),
+                    initDirectory()
                 )
             })
         })
@@ -315,4 +318,4 @@ function methodUpdateEmployee () {
     })
 }
 
-initDirectory()
+init()

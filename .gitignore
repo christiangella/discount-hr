@@ -1,3 +1,5 @@
 .env
 node_modules
 prompt.md
+connection.js
+./config/connection.js
